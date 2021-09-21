@@ -24,12 +24,21 @@ namespace StructuredLoggerDemo
             //    }
             //});
             // Read/Parse
-            root.VisitAllChildren<CscTask>(x =>
+            root.VisitAllChildren<CscTask>(csc =>
             {
-                foreach(var message in x.Children.OfType<Message>())
+                var folder = CscTaskAnalyzer.Analyze(csc);
+                foreach(var analyzer in folder.Children.OfType<Folder>().Where(x => x.Name.Contains("SonarAnalyzer.")))
                 {
-                    Console.WriteLine(message.Text); // All message, including ones that we're not interested in
+                    foreach (var message in analyzer.Children.OfType<Message>())
+                    {
+                        Console.WriteLine(message.Text); // All message, including ones that we're not interested in
+                    }
                 }
+                // Manual way
+                //foreach (var message in x.Children.OfType<Message>())
+                //{
+                //    Console.WriteLine(message.Text); // All message, including ones that we're not interested in
+                //}
             });
             Console.ReadKey();
         }
